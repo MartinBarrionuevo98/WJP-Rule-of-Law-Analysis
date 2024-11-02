@@ -102,3 +102,78 @@ ggplot(data_wjp, aes(x = `WJP Rule of Law Index: Overall Score`)) +
        x = "values",
        y = "density") +  
   theme_minimal()  
+
+
+#Gráfico de densidad con líneas de media y mediana
+ggplot(data_wjp, aes(x = `WJP Rule of Law Index: Overall Score`)) +
+  geom_density(fill = "blue", alpha = 0.5) +
+  geom_vline(xintercept = mean_value, linetype = "dashed", color = "red", size = 1) +
+  geom_vline(xintercept = median_value, linetype = "dotted", color = "green", size = 1) +
+  labs(title = "WJP Rule of Law Index density graph",
+       x = "values",
+       y = "density") +
+  theme_minimal()
+
+
+
+mean_value <- mean(data_wjp$`WJP Rule of Law Index: Overall Score`, na.rm = TRUE)
+
+
+install.packages("performance")
+library(performance)
+
+# Mostrar el p-valor formateado
+formatted_p_value
+
+
+modelo <- lm(`Factor 8: Criminal Justice` ~ 
+               `Factor 1: Constraints on Government Powers` + 
+               `Factor 4: Fundamental Rights` + 
+               `Factor 7: Civil Justice` + 
+               `Factor 3: Open Government` + 
+               `Factor 2: Absence of Corruption`, 
+             data = data_wjp)
+
+
+collinearity_results <- check_collinearity(modelo)
+plot(collinearity_results)
+
+heteroscedasticity_results <- check_heteroscedasticity(modelo)
+print(heteroscedasticity_results)
+
+# Grafico de residuos
+plot(modelo, which = 1)  
+
+modelo_residuos <- data.frame(
+  Ajustados = modelo$fitted.values,
+  Residuos = modelo$residuals
+)
+
+
+ggplot(modelo_residuos, aes(x = Ajustados, y = Residuos)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "Residuos vs Valores Ajustados",
+       x = "Valores Ajustados",
+       y = "Residuos") +
+  theme_minimal()
+
+
+# Calcular valores p 
+p_values <- c(2e-16, 2.68e-12, 2e-16, 2e-16, 9.55e-07)
+
+
+p_adjusted_bonferroni <- p.adjust(p_values, method = "bonferroni")
+
+p_adjusted_holm <- p.adjust(p_values, method = "holm")
+
+p_adjusted_bh <- p.adjust(p_values, method = "BH")
+
+# Resultados
+data.frame(
+  Original = p_values,
+  Bonferroni = p_adjusted_bonferroni,
+  Holm = p_adjusted_holm,
+  BH = p_adjusted_bh
+)
+
