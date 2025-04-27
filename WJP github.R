@@ -91,7 +91,8 @@ ggplot(data_wjp, aes(x = Region, y = `Factor 8: Criminal Justice`)) +
 residuos <- residuals(modelo)
 summary(residuos)
 
-# El valor central de los residuos en los datos es de -0.0005106, lo cual significa que las predicciones del modelo son un tanto mayores que los valores observados aunque tienden a 0
+# El valor central de los residuos en los datos es de -0.0005106, lo cual significa que las predicciones del modelo son un tanto mayores
+# que los valores observados aunque tienden a 0
 
 # Histograma
 
